@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD808D1D222BD632004E5BA2 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */; };
+		DD808D1F222BD65F004E5BA2 /* MainSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */; };
 		DDE087442228EA1C000AD425 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE087432228EA1C000AD425 /* AppDelegate.swift */; };
 		DDE087462228EA1C000AD425 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE087452228EA1C000AD425 /* ViewController.swift */; };
 		DDE087492228EA1C000AD425 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDE087472228EA1C000AD425 /* Main.storyboard */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
+		DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSettingViewController.swift; sourceTree = "<group>"; };
 		DDE087402228EA1C000AD425 /* rb67_master.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rb67_master.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE087432228EA1C000AD425 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDE087452228EA1C000AD425 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -57,6 +61,8 @@
 				DDE087432228EA1C000AD425 /* AppDelegate.swift */,
 				DDE087452228EA1C000AD425 /* ViewController.swift */,
 				DDE087472228EA1C000AD425 /* Main.storyboard */,
+				DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */,
+				DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */,
 				DDE0874A2228EA1D000AD425 /* Assets.xcassets */,
 				DDE0874C2228EA1D000AD425 /* LaunchScreen.storyboard */,
 				DDE0874F2228EA1D000AD425 /* Info.plist */,
@@ -135,7 +141,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD808D1F222BD65F004E5BA2 /* MainSettingViewController.swift in Sources */,
 				DDE087462228EA1C000AD425 /* ViewController.swift in Sources */,
+				DD808D1D222BD632004E5BA2 /* GalleryViewController.swift in Sources */,
 				DDE087442228EA1C000AD425 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -165,6 +173,7 @@
 		DDE087502228EA1D000AD425 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -226,6 +235,7 @@
 		DDE087512228EA1D000AD425 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
