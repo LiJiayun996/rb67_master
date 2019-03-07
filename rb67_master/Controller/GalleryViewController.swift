@@ -47,15 +47,13 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("collectionView #1 method called")
-        return userImageURL.count
+        return userImageThumbnailURL.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        print("collectionView #2 method called")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! imageCellViewController
-        cell.userImageViewCell.image = UIImage(contentsOfFile: userImageURL[indexPath.row].path)
+        cell.userImageViewCell.image = UIImage(contentsOfFile: userImageThumbnailURL[indexPath.row].path)
         return cell
     }
     

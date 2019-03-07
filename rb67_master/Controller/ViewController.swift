@@ -48,6 +48,8 @@ class ViewController: UIViewController {
     
     var userImageStorageURLs = [URL]()
     
+    var userImageThumbnailStorageURLs = [URL]()
+    
     //MARK:  -- Camera Operations
     
     @IBAction func colorShutterPressedTouchUpInside(_ sender: Any) {
@@ -113,6 +115,7 @@ class ViewController: UIViewController {
         if segue.identifier == "showUserImageGallery_Segue"{
             let galleryVC = segue.destination as! GalleryViewController
             galleryVC.userImageURL = self.userImageStorageURLs
+            galleryVC.userImageThumbnailURL = self.userImageThumbnailStorageURLs
         }
     }
     
@@ -317,7 +320,14 @@ class ViewController: UIViewController {
         
         
         // save processed image
-        saveImage(imageName: renameUserImage(), image: postProcessingImage)
+        saveImage(imageName: renameUserImage(), image: postProcessingImage, isThumbnail: false)
+        
+        var galleryThumbNailImage = UIImage()
+        galleryThumbNailImage = postProcessingImage.resized(toWidth: 500)!
+
+        saveImage(imageName: "\(renameUserImage())_Thumb", image: galleryThumbNailImage, isThumbnail: true)
+        
+
         
         // store url datas to a data base !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
@@ -464,7 +474,7 @@ class ViewController: UIViewController {
 
     
     //MARK:  -- Saving Image Method
-    func saveImage(imageName: String, image: UIImage) {
+    func saveImage(imageName: String, image: UIImage, isThumbnail: Bool) {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let fileName = imageName
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
@@ -478,15 +488,21 @@ class ViewController: UIViewController {
                 print("couldn't remove file at path", removeError)
             }
         }
+        
         do {
             try data.write(to: fileURL)
             
+            if isThumbnail == true{
+            self.userImageThumbnailStorageURLs.append(fileURL)
+            } else {
             self.userImageStorageURLs.append(fileURL)
+            }
             
             print("file url is \(fileURL)")
         } catch let error {
             print("error saving file with error", error)
         }
+        
     }
     //MARK: Not Sure I Need This One
     func loadImageFromDiskWith(fileName: String) -> UIImage? {
@@ -575,5 +591,22 @@ extension UIImage {
         UIGraphicsEndImageContext()
         
         return scaledImage!
+    }
+}
+
+extension UIImage {
+    func resized(withPercentage percentage: CGFloat) -> UIImage? {
+        let canvasSize = CGSize(width: size.width * percentage, height: size.height * percentage)
+        UIGraphicsBeginImageContextWithOptions(canvasSize, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: CGRect(origin: .zero, size: canvasSize))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+    func resized(toWidth width: CGFloat) -> UIImage? {
+        let canvasSize = CGSize(width: width, height: CGFloat(ceil(width/size.width * size.height)))
+        UIGraphicsBeginImageContextWithOptions(canvasSize, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: CGRect(origin: .zero, size: canvasSize))
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
 }
