@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		DD808D1D222BD632004E5BA2 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */; };
 		DD808D1F222BD65F004E5BA2 /* MainSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */; };
+		DDA7D4292231110600CEEA3E /* ImageSlideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA7D4222231110600CEEA3E /* ImageSlideViewController.swift */; };
+		DDA7D42A2231110600CEEA3E /* ImageSlideShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA7D4232231110600CEEA3E /* ImageSlideShowViewController.swift */; };
+		DDA7D42B2231110600CEEA3E /* ImageSlideShowNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA7D4242231110600CEEA3E /* ImageSlideShowNavigationController.swift */; };
+		DDA7D42C2231110600CEEA3E /* ImageSlideShow.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDA7D4262231110600CEEA3E /* ImageSlideShow.storyboard */; };
+		DDA7D42D2231110600CEEA3E /* UIPageViewController+ImageSlideShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA7D4282231110600CEEA3E /* UIPageViewController+ImageSlideShow.swift */; };
+		DDA7D42F2231169A00CEEA3E /* imageCellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA7D42E2231169A00CEEA3E /* imageCellViewController.swift */; };
 		DDE087442228EA1C000AD425 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE087432228EA1C000AD425 /* AppDelegate.swift */; };
 		DDE087462228EA1C000AD425 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE087452228EA1C000AD425 /* ViewController.swift */; };
 		DDE087492228EA1C000AD425 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDE087472228EA1C000AD425 /* Main.storyboard */; };
@@ -19,6 +25,12 @@
 /* Begin PBXFileReference section */
 		DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
 		DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSettingViewController.swift; sourceTree = "<group>"; };
+		DDA7D4222231110600CEEA3E /* ImageSlideViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSlideViewController.swift; sourceTree = "<group>"; };
+		DDA7D4232231110600CEEA3E /* ImageSlideShowViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSlideShowViewController.swift; sourceTree = "<group>"; };
+		DDA7D4242231110600CEEA3E /* ImageSlideShowNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSlideShowNavigationController.swift; sourceTree = "<group>"; };
+		DDA7D4262231110600CEEA3E /* ImageSlideShow.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ImageSlideShow.storyboard; sourceTree = "<group>"; };
+		DDA7D4282231110600CEEA3E /* UIPageViewController+ImageSlideShow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIPageViewController+ImageSlideShow.swift"; sourceTree = "<group>"; };
+		DDA7D42E2231169A00CEEA3E /* imageCellViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imageCellViewController.swift; sourceTree = "<group>"; };
 		DDE087402228EA1C000AD425 /* rb67_master.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rb67_master.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE087432228EA1C000AD425 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDE087452228EA1C000AD425 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -39,6 +51,77 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DDA7D41C2231108E00CEEA3E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				DDE087452228EA1C000AD425 /* ViewController.swift */,
+				DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */,
+				DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */,
+				DDA7D42E2231169A00CEEA3E /* imageCellViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		DDA7D41D2231109700CEEA3E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				DDE0874C2228EA1D000AD425 /* LaunchScreen.storyboard */,
+				DDE087472228EA1C000AD425 /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		DDA7D41E2231109C00CEEA3E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				DDA7D4202231110600CEEA3E /* ImageSlideShow */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		DDA7D41F223110B900CEEA3E /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		DDA7D4202231110600CEEA3E /* ImageSlideShow */ = {
+			isa = PBXGroup;
+			children = (
+				DDA7D4212231110600CEEA3E /* Classes */,
+				DDA7D4252231110600CEEA3E /* Storyboard */,
+				DDA7D4272231110600CEEA3E /* Extensions */,
+			);
+			path = ImageSlideShow;
+			sourceTree = "<group>";
+		};
+		DDA7D4212231110600CEEA3E /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				DDA7D4222231110600CEEA3E /* ImageSlideViewController.swift */,
+				DDA7D4232231110600CEEA3E /* ImageSlideShowViewController.swift */,
+				DDA7D4242231110600CEEA3E /* ImageSlideShowNavigationController.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		DDA7D4252231110600CEEA3E /* Storyboard */ = {
+			isa = PBXGroup;
+			children = (
+				DDA7D4262231110600CEEA3E /* ImageSlideShow.storyboard */,
+			);
+			path = Storyboard;
+			sourceTree = "<group>";
+		};
+		DDA7D4272231110600CEEA3E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DDA7D4282231110600CEEA3E /* UIPageViewController+ImageSlideShow.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		DDE087372228EA1C000AD425 = {
 			isa = PBXGroup;
 			children = (
@@ -59,13 +142,12 @@
 			isa = PBXGroup;
 			children = (
 				DDE087432228EA1C000AD425 /* AppDelegate.swift */,
-				DDE087452228EA1C000AD425 /* ViewController.swift */,
-				DDE087472228EA1C000AD425 /* Main.storyboard */,
-				DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */,
-				DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */,
-				DDE0874A2228EA1D000AD425 /* Assets.xcassets */,
-				DDE0874C2228EA1D000AD425 /* LaunchScreen.storyboard */,
 				DDE0874F2228EA1D000AD425 /* Info.plist */,
+				DDE0874A2228EA1D000AD425 /* Assets.xcassets */,
+				DDA7D41F223110B900CEEA3E /* SupportingFiles */,
+				DDA7D41E2231109C00CEEA3E /* Model */,
+				DDA7D41D2231109700CEEA3E /* View */,
+				DDA7D41C2231108E00CEEA3E /* Controller */,
 			);
 			path = rb67_master;
 			sourceTree = "<group>";
@@ -129,6 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDE0874E2228EA1D000AD425 /* LaunchScreen.storyboard in Resources */,
+				DDA7D42C2231110600CEEA3E /* ImageSlideShow.storyboard in Resources */,
 				DDE0874B2228EA1D000AD425 /* Assets.xcassets in Resources */,
 				DDE087492228EA1C000AD425 /* Main.storyboard in Resources */,
 			);
@@ -142,8 +225,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD808D1F222BD65F004E5BA2 /* MainSettingViewController.swift in Sources */,
+				DDA7D42B2231110600CEEA3E /* ImageSlideShowNavigationController.swift in Sources */,
+				DDA7D42F2231169A00CEEA3E /* imageCellViewController.swift in Sources */,
+				DDA7D42A2231110600CEEA3E /* ImageSlideShowViewController.swift in Sources */,
 				DDE087462228EA1C000AD425 /* ViewController.swift in Sources */,
 				DD808D1D222BD632004E5BA2 /* GalleryViewController.swift in Sources */,
+				DDA7D4292231110600CEEA3E /* ImageSlideViewController.swift in Sources */,
+				DDA7D42D2231110600CEEA3E /* UIPageViewController+ImageSlideShow.swift in Sources */,
 				DDE087442228EA1C000AD425 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,7 +387,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.UNPC.rb67.rb67-master";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.UNPC.rb67-master";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -317,7 +405,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.UNPC.rb67.rb67-master";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.UNPC.rb67-master";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";

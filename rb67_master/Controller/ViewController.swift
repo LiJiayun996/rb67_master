@@ -44,6 +44,10 @@ class ViewController: UIViewController {
     
     var filterToProcess : String = "B&W"
     
+    //MARK: Saving Image
+    
+    var userImageStorageURLs = [URL]()
+    
     //MARK:  -- Camera Operations
     
     @IBAction func colorShutterPressedTouchUpInside(_ sender: Any) {
@@ -99,9 +103,19 @@ class ViewController: UIViewController {
         
     }
     
+    
+    //MARK:  -- Go to and transfer data to GalleryVC
+    
     @IBAction func galleryButtonPressed(_ sender: Any) {
-        
+        performSegue(withIdentifier: "showUserImageGallery_Segue", sender: nil)
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showUserImageGallery_Segue"{
+            let galleryVC = segue.destination as! GalleryViewController
+            galleryVC.userImageURL = self.userImageStorageURLs
+        }
+    }
+    
     
     
     @IBAction func TestButtonPressed(_ sender: Any) {
@@ -293,7 +307,19 @@ class ViewController: UIViewController {
             
         }
         
-        UIImageWriteToSavedPhotosAlbum(postProcessingImage, print("postProcessingImage Saved"), nil, nil)
+        // assigning / applying light leak overlay
+        
+        
+        // assigning / applying film boarder overlay
+        
+        
+        UIImageWriteToSavedPhotosAlbum(postProcessingImage, print("postProcessingImage Saved to ios gallery"), nil, nil)
+        
+        
+        // save processed image
+        saveImage(imageName: renameUserImage(), image: postProcessingImage)
+        
+        // store url datas to a data base !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
         
         // assigning / applying light leak overlay
@@ -413,10 +439,67 @@ class ViewController: UIViewController {
     
     //MARK:  -- Resize Image / overlay image
         // Adaptive to all camera specs
-
+    
+    //MARK:  -- Rename images to uniform style
+    private func renameUserImage() -> String {
+        
+        let currentDateTime = Date()
+        let userCalendar = Calendar.current
+        let requestedComponents: Set<Calendar.Component> = [
+            .year,
+            .month,
+            .day,
+            .hour,
+            .minute,
+            .second
+        ]
+        let dateTimeComponents = userCalendar.dateComponents(requestedComponents, from: currentDateTime)
+        let timestampName = String("\(dateTimeComponents.year!)-\(dateTimeComponents.month!)-\(dateTimeComponents.day!)-\(dateTimeComponents.hour!):\(dateTimeComponents.minute!):\(dateTimeComponents.second!)")
+        let caTimeRound = Int( (round( CACurrentMediaTime() / 0.0001 ) * 0.0001) * 1000 )
+        let last4 = String(caTimeRound).suffix(4)
+        let fileName = "\(timestampName)-\(last4)"
+        print(fileName)
+        return fileName
+    }
 
     
-    
+    //MARK:  -- Saving Image Method
+    func saveImage(imageName: String, image: UIImage) {
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let fileName = imageName
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        guard let data = image.jpegData(compressionQuality: 1) else { return }
+        //Checks if file exists, removes it if so.
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            do {
+                try FileManager.default.removeItem(atPath: fileURL.path)
+                print("Removed old image")
+            } catch let removeError {
+                print("couldn't remove file at path", removeError)
+            }
+        }
+        do {
+            try data.write(to: fileURL)
+            
+            self.userImageStorageURLs.append(fileURL)
+            
+            print("file url is \(fileURL)")
+        } catch let error {
+            print("error saving file with error", error)
+        }
+    }
+    //MARK: Not Sure I Need This One
+    func loadImageFromDiskWith(fileName: String) -> UIImage? {
+        let documentDirectory = FileManager.SearchPathDirectory.documentDirectory
+        let userDomainMask = FileManager.SearchPathDomainMask.userDomainMask
+        let paths = NSSearchPathForDirectoriesInDomains(documentDirectory, userDomainMask, true)
+        if let dirPath = paths.first {
+            let imageUrl = URL(fileURLWithPath: dirPath).appendingPathComponent(fileName)
+            let image = UIImage(contentsOfFile: imageUrl.path)
+            return image
+        }
+        return nil
+    }
     
 } // end of viewcontroller class
 
@@ -434,6 +517,8 @@ extension ViewController: AVCapturePhotoCaptureDelegate{
         }
     }
 }
+
+//MARK: -- for Corping Images
 
 extension UIImage {
     
