@@ -37,8 +37,9 @@ class ViewController: UIViewController {
     var cameraWBBlueValue: Float {get{return currentCamera!.deviceWhiteBalanceGains.blueGain}}
     var cameraWBRedBlueIndex = Float()
     
-    //MARK:  -- Post image processing var
+    //MARK:  -- Post image processing
     
+    let ciContext = CIContext()
     var cameraPixelSpec : CGSize! {get{return image?.size}}
     var postProcessingImage : UIImage!
     var lightLeakOverlayImage : UIImage!
@@ -252,6 +253,12 @@ class ViewController: UIViewController {
 
     func postImageProcessingProcedure() {
         
+        var time1 : Double = 0.0
+        var time2 : Double = 0.0
+        
+        print("processing start at \(CACurrentMediaTime())")
+        time1 = CACurrentMediaTime()
+        
         postProcessingImage = image
         //BUG FIX for front cam white border
         if cameraPositionIsBack == false {
@@ -331,7 +338,9 @@ class ViewController: UIViewController {
 
         saveImage(imageName: "\(renameUserImage())_Thumb", image: galleryThumbNailImage, isThumbnail: true)
         
-
+        print("processing end at \(CACurrentMediaTime())")
+        time2 = CACurrentMediaTime()
+        print("Processing interval = \(time2 - time1)")
         
         // store url datas to a data base !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
@@ -364,7 +373,6 @@ class ViewController: UIViewController {
         }
     }
     
-    
     private func applyFilterTo(image: UIImage, filterEffect: Filter) -> UIImage? {
         
 //        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
@@ -372,7 +380,7 @@ class ViewController: UIViewController {
 //        }
 //
 //        let context = CIContext(eaglContext: openGLContext)
-        let context = CIContext()
+//        let context = CIContext()
         let ciImage = CIImage(image: image)
         let filter = CIFilter(name: filterEffect.filterName)
         filter?.setValue(ciImage, forKey: kCIInputImageKey)
@@ -382,7 +390,7 @@ class ViewController: UIViewController {
         }
         var filteredImage: UIImage?
         if let output = filter?.value(forKey: kCIOutputImageKey) as? CIImage,
-            let cgiImageResult = context.createCGImage(output, from: output.extent){
+            let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
             filteredImage = UIImage(cgImage: cgiImageResult)
         }
         return filteredImage
@@ -397,7 +405,7 @@ class ViewController: UIViewController {
 //        }
 //
 //        let context = CIContext(eaglContext: openGLContext)
-        let context = CIContext()
+//        let context = CIContext()
         let imageToProcess = CIImage(image: image)
         let overlayImageToProcess = CIImage(image: overlayImage)
         let imageBlend = CIFilter(name: "CIScreenBlendMode")
@@ -405,9 +413,10 @@ class ViewController: UIViewController {
         imageBlend?.setValue(imageToProcess, forKey: kCIInputBackgroundImageKey)
         var blendedImage: UIImage?
         if let output = imageBlend?.value(forKey: kCIOutputImageKey) as? CIImage,
-            let cgiImageResult = context.createCGImage(output, from: output.extent){
+            let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
             blendedImage = UIImage(cgImage: cgiImageResult)
         }
+
         return blendedImage
     }
     
@@ -419,7 +428,7 @@ class ViewController: UIViewController {
 //            return nil
 //        }
 //        let context = CIContext(eaglContext: openGLContext)
-        let context = CIContext()
+//        let context = CIContext()
         let imageToProcess = CIImage(image: image)
         let overlayImageToProcess = CIImage(image: overlayImage)
         let imageBlend = CIFilter(name: "CISourceOverCompositing")
@@ -427,7 +436,7 @@ class ViewController: UIViewController {
         imageBlend?.setValue(imageToProcess, forKey: kCIInputBackgroundImageKey)
         var blendedImage: UIImage?
         if let output = imageBlend?.value(forKey: kCIOutputImageKey) as? CIImage,
-            let cgiImageResult = context.createCGImage(output, from: output.extent){
+            let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
             blendedImage = UIImage(cgImage: cgiImageResult)
         }
         return blendedImage
