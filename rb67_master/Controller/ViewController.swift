@@ -34,6 +34,11 @@ class ViewController: UIViewController {
     
     var exposureIndexNumber: Float! {get{return Float(shutterValueAsShot.value/100000) * Float(isoValueAsShot) }}
     
+    var cameraWBRedValue: Float {get{return currentCamera!.deviceWhiteBalanceGains.redGain}}
+    var cameraWBBlueValue: Float {get{return currentCamera!.deviceWhiteBalanceGains.blueGain}}
+    
+    var cameraWBRedBlueIndex = Float()
+    
     //MARK:  -- Post image processing var
     
     var postProcessingImage : UIImage!
@@ -62,7 +67,7 @@ class ViewController: UIViewController {
             print(exposureIndexNumber)
             print("room lighting")
 
-            cameraExposureAdjust(exposureBias: -1.5 )
+            cameraExposureAdjust(exposureBias: -0.7 )
             
             filterToProcess = "ColorNight"
             
@@ -72,7 +77,7 @@ class ViewController: UIViewController {
             print(exposureIndexNumber)
             print("daylight")
             
-            cameraExposureAdjust(exposureBias: -1.7 )
+            cameraExposureAdjust(exposureBias: -1.4 )
             
             filterToProcess = "ColorDay"
         }
@@ -120,13 +125,13 @@ class ViewController: UIViewController {
     }
     
     
+    @IBOutlet weak var testIndexShow: UILabel!
     
     @IBAction func TestButtonPressed(_ sender: Any) {
         
-        do{
-            try self.currentCamera!.lockForConfiguration()
-            self.currentCamera!.setExposureTargetBias(-1.7, completionHandler: nil)
-        } catch let error { print(error) }
+        cameraWBRedBlueIndex = cameraWBRedValue - cameraWBBlueValue
+        testIndexShow.text = String(cameraWBRedBlueIndex)
+        
         
     }
     
@@ -261,7 +266,15 @@ class ViewController: UIViewController {
     func postImageProcessingProcedure() {
         
         postProcessingImage = image
-        lightLeakOverlayImage = UIImage(named: "testSquareOverlay")
+        
+        if cameraWBRedBlueIndex <= -0.1 {
+            lightLeakOverlayImage = UIImage(named: "testSquareOverlay")
+        } else if cameraWBRedBlueIndex >= 0.5 {
+            lightLeakOverlayImage = UIImage(named: "testSquareOverlayBlue")
+        } else {
+            lightLeakOverlayImage = UIImage(named: "testSquareOverlayWhite")
+        }
+        
         borderOverlayImage = UIImage(named: "testBorderOverlayPNG")
         
         // assigning / applying filter to master post processing image
@@ -422,7 +435,6 @@ class ViewController: UIViewController {
         guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
             return nil
         }
-        
         let context = CIContext(eaglContext: openGLContext)
         
         
@@ -526,6 +538,7 @@ extension ViewController: AVCapturePhotoCaptureDelegate{
             print(imageData)
             image = UIImage(data: imageData)
 //            performSegue(withIdentifier: "showPhoto_Segue", sender: nil)
+            cameraWBRedBlueIndex = cameraWBRedValue - cameraWBBlueValue
             postProcessingImage = image
             cameraExposureAdjust(exposureBias: 0.0)
             postImageProcessingProcedure()

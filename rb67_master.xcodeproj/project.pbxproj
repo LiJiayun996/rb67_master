@@ -79,13 +79,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		DDA7D41F223110B900CEEA3E /* SupportingFiles */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SupportingFiles;
-			sourceTree = "<group>";
-		};
 		DDA7D4202231110600CEEA3E /* ImageSlideShow */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,7 +137,6 @@
 				DDE087432228EA1C000AD425 /* AppDelegate.swift */,
 				DDE0874F2228EA1D000AD425 /* Info.plist */,
 				DDE0874A2228EA1D000AD425 /* Assets.xcassets */,
-				DDA7D41F223110B900CEEA3E /* SupportingFiles */,
 				DDA7D41E2231109C00CEEA3E /* Model */,
 				DDA7D41D2231109700CEEA3E /* View */,
 				DDA7D41C2231108E00CEEA3E /* Controller */,
