@@ -59,12 +59,12 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        //TRY!!! load user full size image here
+        //load user full size image here
         loadFullSizeImages()
         
         ImageSlideShowViewController.presentFrom(self){ [weak self] controller in
             controller.initialIndex = indexPath.item
-            controller.dismissOnPanGesture = true
+            controller.dismissOnPanGesture = false
             controller.slides = self?.userFullSizeImages
             controller.enableZoom = true
             controller.controllerDidDismiss = {
@@ -83,7 +83,6 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
         userImageURL.removeAll()
         userImageThumbnailURL.removeAll()
     }
-    
 }
 
 

@@ -113,7 +113,6 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
 		if let issViewController = navController.visibleViewController as? ImageSlideShowViewController
 		{
 			configure?(issViewController)
-			
 			viewController.present(navController, animated: true, completion: nil)
 		}
 	}
@@ -121,7 +120,6 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
 	required public init?(coder: NSCoder)
 	{
 		super.init(coder: coder)
-		
 		prepareAnimations()
 	}
 	
@@ -134,11 +132,27 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
 		delegate = self
 		dataSource = self
 		
-		hidesBottomBarWhenPushed = true
-		
+//        hidesBottomBarWhenPushed = true
 		navigationController?.navigationBar.tintColor = navigationBarTintColor
-		navigationController?.view.backgroundColor = .black
+        navigationController?.view.backgroundColor = .black
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = true
+        
+//        toolbarItems?.append(UIBarButtonItem(barButtonSystemItem: .add, target: self, action: nil))
+        
+//        [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+//            forBarMetrics:UIBarMetricsDefault];
+//        self.navigationController.navigationBar.shadowImage = [UIImage new];
+//        self.navigationController.navigationBar.translucent = YES;
+//        self.navigationController.view.backgroundColor = [UIColor clearColor];
+//        self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
+        
+        
+        
 		navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(dismiss(sender:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: nil )
+        
 		
 		//	Manage Gestures
 		

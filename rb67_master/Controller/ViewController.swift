@@ -26,33 +26,28 @@ class ViewController: UIViewController {
     
     //MARK:  -- image var
     var image: UIImage?
+    var cameraPositionIsBack = true
 
     
     //MARK:  -- fine tuning image exposure
     var isoValueAsShot: Float! {get{return currentCamera?.iso}}
     var shutterValueAsShot: CMTime! {get{return currentCamera?.exposureDuration}}
-    
     var exposureIndexNumber: Float! {get{return Float(shutterValueAsShot.value/100000) * Float(isoValueAsShot) }}
-    
     var cameraWBRedValue: Float {get{return currentCamera!.deviceWhiteBalanceGains.redGain}}
     var cameraWBBlueValue: Float {get{return currentCamera!.deviceWhiteBalanceGains.blueGain}}
-    
     var cameraWBRedBlueIndex = Float()
     
     //MARK:  -- Post image processing var
     
+    var cameraPixelSpec : CGSize! {get{return image?.size}}
     var postProcessingImage : UIImage!
-    
     var lightLeakOverlayImage : UIImage!
-    
     var borderOverlayImage : UIImage!
-    
     var filterToProcess : String = "B&W"
     
     //MARK: Saving Image
     
     var userImageStorageURLs = [URL]()
-    
     var userImageThumbnailStorageURLs = [URL]()
     
     //MARK:  -- Camera Operations
@@ -63,25 +58,16 @@ class ViewController: UIViewController {
         print("Shutter value as shot was \(String(describing: shutterValueAsShot))")
         
         if exposureIndexNumber >= 3000 {
-            
             print(exposureIndexNumber)
             print("room lighting")
-
             cameraExposureAdjust(exposureBias: -0.7 )
-            
             filterToProcess = "ColorNight"
-            
-            
         } else {
-            
             print(exposureIndexNumber)
             print("daylight")
-            
             cameraExposureAdjust(exposureBias: -1.4 )
-            
             filterToProcess = "ColorDay"
         }
-        
         let settings = AVCapturePhotoSettings()
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
         
@@ -91,7 +77,6 @@ class ViewController: UIViewController {
         
         print("ISO value as shot was \(String(describing: isoValueAsShot))")
         print("Shutter value as shot was \(String(describing: shutterValueAsShot))")
-        
         filterToProcess = "B&W"
         let settings = AVCapturePhotoSettings()
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
@@ -116,6 +101,7 @@ class ViewController: UIViewController {
     @IBAction func galleryButtonPressed(_ sender: Any) {
         performSegue(withIdentifier: "showUserImageGallery_Segue", sender: nil)
     }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showUserImageGallery_Segue"{
             let galleryVC = segue.destination as! GalleryViewController
@@ -132,13 +118,13 @@ class ViewController: UIViewController {
         cameraWBRedBlueIndex = cameraWBRedValue - cameraWBBlueValue
         testIndexShow.text = String(cameraWBRedBlueIndex)
         
-        
     }
     
     
     //MARK:  -- Methods
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         setupCaptureSession()
@@ -155,8 +141,6 @@ class ViewController: UIViewController {
     
     func configColorShutterButton() {
         
-        
-        
     }
     
     
@@ -167,7 +151,6 @@ class ViewController: UIViewController {
         do{
             try self.currentCamera!.lockForConfiguration()
             self.currentCamera!.setExposureTargetBias(exposureBias, completionHandler: nil)
-            
         } catch let error { print(error) }
         
     }
@@ -180,7 +163,6 @@ class ViewController: UIViewController {
         
         let deviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [AVCaptureDevice.DeviceType.builtInWideAngleCamera], mediaType: AVMediaType.video, position: AVCaptureDevice.Position.unspecified)
         let devices = deviceDiscoverySession.devices
-        
         for device in devices {
             if device.position == AVCaptureDevice.Position.back{
                 backCamera = device
@@ -188,7 +170,6 @@ class ViewController: UIViewController {
                 frontCamera = device }
         }
         currentCamera = backCamera
-//
 //        do{
 //            try self.currentCamera!.lockForConfiguration()
 //            self.currentCamera!.setExposureTargetBias(-1.7, completionHandler: nil)
@@ -197,6 +178,7 @@ class ViewController: UIViewController {
     }
     
     func setupInputOutput() {
+        
         do {
             let captureDeviceInput = try AVCaptureDeviceInput(device: currentCamera!)
             captureSession.addInput(captureDeviceInput)
@@ -206,14 +188,15 @@ class ViewController: UIViewController {
         } catch {
             print(error)
         }
+        
     }
     
     func setupPreviewLayer(){
+        
         cameraPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         cameraPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
         cameraPreviewLayer?.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
         cameraPreviewLayer?.frame = self.view.frame
-        
         // vvv resize camera preview to view element vvv
         previewView.layer.addSublayer(cameraPreviewLayer!)
         self.cameraPreviewLayer?.frame = self.previewView.bounds
@@ -223,11 +206,10 @@ class ViewController: UIViewController {
     }
     
     @objc func switchCamera() {
-        captureSession.beginConfiguration()
         
+        captureSession.beginConfiguration()
         // Change the device based on the current camera
         let newDevice = (currentCamera?.position == AVCaptureDevice.Position.back) ? frontCamera : backCamera
-        
         // Remove all inputs from the session
         for input in captureSession.inputs {
             captureSession.removeInput(input as! AVCaptureDeviceInput)
@@ -237,6 +219,11 @@ class ViewController: UIViewController {
         let cameraInput:AVCaptureDeviceInput
         do {
             cameraInput = try AVCaptureDeviceInput(device: newDevice!)
+            if newDevice?.position == AVCaptureDevice.Position.front {
+                cameraPositionIsBack = false
+            } else {
+                cameraPositionIsBack = true
+            }
         } catch {
             print(error)
             return
@@ -266,6 +253,10 @@ class ViewController: UIViewController {
     func postImageProcessingProcedure() {
         
         postProcessingImage = image
+        //BUG FIX for front cam white border
+        if cameraPositionIsBack == false {
+            postProcessingImage = postProcessingImage.resized(toWidth: 3024)
+        }
         
         if cameraWBRedBlueIndex <= -0.1 {
             lightLeakOverlayImage = UIImage(named: "testSquareOverlay")
@@ -324,7 +315,7 @@ class ViewController: UIViewController {
         }
         
         // assigning / applying light leak overlay
-        
+
         
         // assigning / applying film boarder overlay
         
@@ -354,7 +345,9 @@ class ViewController: UIViewController {
         
     }
     
+    //Test Code for folor polynomial
     
+
     
     
     
@@ -374,24 +367,20 @@ class ViewController: UIViewController {
     
     private func applyFilterTo(image: UIImage, filterEffect: Filter) -> UIImage? {
         
-        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
-            return nil
-        }
-        
-        let context = CIContext(eaglContext: openGLContext)
-        
-        let ciImage = CIImage(cgImage: cgImage)
+//        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
+//            return nil
+//        }
+//
+//        let context = CIContext(eaglContext: openGLContext)
+        let context = CIContext()
+        let ciImage = CIImage(image: image)
         let filter = CIFilter(name: filterEffect.filterName)
-        
         filter?.setValue(ciImage, forKey: kCIInputImageKey)
-        
         if let filterEffectValue = filterEffect.filterEffectValue,
             let filterEffterValueName = filterEffect.filterEffectValueName {
             filter?.setValue(filterEffectValue, forKey: filterEffterValueName)
         }
-        
         var filteredImage: UIImage?
-        
         if let output = filter?.value(forKey: kCIOutputImageKey) as? CIImage,
             let cgiImageResult = context.createCGImage(output, from: output.extent){
             filteredImage = UIImage(cgImage: cgiImageResult)
@@ -403,28 +392,22 @@ class ViewController: UIViewController {
     private func blendImage(image: UIImage, overlayImage: UIImage) -> UIImage? {
         
         
-        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
-            return nil
-        }
-        
-        let context = CIContext(eaglContext: openGLContext)
-        
-        
+//        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
+//            return nil
+//        }
+//
+//        let context = CIContext(eaglContext: openGLContext)
+        let context = CIContext()
         let imageToProcess = CIImage(image: image)
         let overlayImageToProcess = CIImage(image: overlayImage)
-        
         let imageBlend = CIFilter(name: "CIScreenBlendMode")
-        
         imageBlend?.setValue(overlayImageToProcess, forKey: kCIInputImageKey)
         imageBlend?.setValue(imageToProcess, forKey: kCIInputBackgroundImageKey)
-        
         var blendedImage: UIImage?
-        
         if let output = imageBlend?.value(forKey: kCIOutputImageKey) as? CIImage,
             let cgiImageResult = context.createCGImage(output, from: output.extent){
             blendedImage = UIImage(cgImage: cgiImageResult)
         }
-        
         return blendedImage
     }
     
@@ -432,31 +415,26 @@ class ViewController: UIViewController {
     private func blendBoarderImage(image: UIImage, overlayImage: UIImage) -> UIImage? {
         
         
-        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
-            return nil
-        }
-        let context = CIContext(eaglContext: openGLContext)
-        
-        
+//        guard let cgImage = image.cgImage, let openGLContext = EAGLContext(api: .openGLES3) else {
+//            return nil
+//        }
+//        let context = CIContext(eaglContext: openGLContext)
+        let context = CIContext()
         let imageToProcess = CIImage(image: image)
         let overlayImageToProcess = CIImage(image: overlayImage)
-        
         let imageBlend = CIFilter(name: "CISourceOverCompositing")
-        
         imageBlend?.setValue(overlayImageToProcess, forKey: kCIInputImageKey)
         imageBlend?.setValue(imageToProcess, forKey: kCIInputBackgroundImageKey)
-        
         var blendedImage: UIImage?
-        
         if let output = imageBlend?.value(forKey: kCIOutputImageKey) as? CIImage,
             let cgiImageResult = context.createCGImage(output, from: output.extent){
             blendedImage = UIImage(cgImage: cgiImageResult)
         }
-        
         return blendedImage
     }
     
     
+
     
     
     //MARK:  -- Resize Image / overlay image
@@ -563,6 +541,7 @@ extension UIImage {
         ///     - otherSize: the second size used to calculate the ratio
         ///
         /// - return: the aspect ratio between the two sizes
+        
         func aspectRatio(between size: CGSize, and otherSize: CGSize) -> CGFloat {
             let aspectWidth  = size.width/otherSize.width
             let aspectHeight = size.height/otherSize.height
