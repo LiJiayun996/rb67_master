@@ -10,6 +10,11 @@ import UIKit
 import AVFoundation
 import CoreImage
 
+struct GlobalVariable {
+    static var userImageStorageURLGlobal = [URL]()
+    static var userImageThumbnailStorageURLsGlobal = [URL]()
+}
+
 class ViewController: UIViewController {
     
     
@@ -28,7 +33,6 @@ class ViewController: UIViewController {
     var image: UIImage?
     var cameraPositionIsBack = true
 
-    
     //MARK:  -- fine tuning image exposure
     var isoValueAsShot: Float! {get{return currentCamera?.iso}}
     var shutterValueAsShot: CMTime! {get{return currentCamera?.exposureDuration}}
@@ -48,10 +52,32 @@ class ViewController: UIViewController {
     
     //MARK: Saving Image
     
-    var userImageStorageURLs = [URL]()
-    var userImageThumbnailStorageURLs = [URL]()
+    public var userImageStorageURLs = [URL]()
+    public var userImageThumbnailStorageURLs = [URL]()
     
     //MARK:  -- Camera Operations
+    
+    
+    
+    func theySeeMeRolling(){
+    
+        
+        
+        
+        
+        
+print("$$$$$$$$$$$")
+    
+        
+        
+        
+        
+        
+    }
+    
+    
+    
+    
     
     @IBAction func colorShutterPressedTouchUpInside(_ sender: Any) {
         
@@ -71,7 +97,6 @@ class ViewController: UIViewController {
         }
         let settings = AVCapturePhotoSettings()
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
-        
     }
     
     @IBAction func blackWhiteShutterPressedTouchUpInside(_ sender: Any) {
@@ -101,15 +126,16 @@ class ViewController: UIViewController {
     
     @IBAction func galleryButtonPressed(_ sender: Any) {
         performSegue(withIdentifier: "showUserImageGallery_Segue", sender: nil)
+        GlobalVariable.userImageStorageURLGlobal = userImageStorageURLs
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showUserImageGallery_Segue"{
-            let galleryVC = segue.destination as! GalleryViewController
-            galleryVC.userImageURL = self.userImageStorageURLs
-            galleryVC.userImageThumbnailURL = self.userImageThumbnailStorageURLs
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if segue.identifier == "showUserImageGallery_Segue"{
+//            let galleryVC = segue.destination as! GalleryViewController
+//            galleryVC.userImageURL = self.userImageStorageURLs
+//            galleryVC.userImageThumbnailURL = self.userImageThumbnailStorageURLs
+//        }
+//    }
     
     
     @IBOutlet weak var testIndexShow: UILabel!
@@ -134,8 +160,10 @@ class ViewController: UIViewController {
         setupPreviewLayer()
         captureSession.startRunning()
         
+        // database storages set to global variebles here vvvvv
         
-        // Do any additional setup after loading the view, typically from a nib.
+        
+
     }
     
     //MARK: Setup UI
@@ -252,12 +280,8 @@ class ViewController: UIViewController {
     //MARK:  -- Post Image Production
 
     func postImageProcessingProcedure() {
-        
-        var time1 : Double = 0.0
-        var time2 : Double = 0.0
-        
-        print("processing start at \(CACurrentMediaTime())")
-        time1 = CACurrentMediaTime()
+
+        UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
         
         postProcessingImage = image
         //BUG FIX for front cam white border
@@ -335,12 +359,11 @@ class ViewController: UIViewController {
         
         var galleryThumbNailImage = UIImage()
         galleryThumbNailImage = postProcessingImage.resized(toWidth: 500)!
+        
+        UIImageWriteToSavedPhotosAlbum(galleryThumbNailImage, print("postProcessingImage Saved to ios gallery"), nil, nil)
 
         saveImage(imageName: "\(renameUserImage())_Thumb", image: galleryThumbNailImage, isThumbnail: true)
         
-        print("processing end at \(CACurrentMediaTime())")
-        time2 = CACurrentMediaTime()
-        print("Processing interval = \(time2 - time1)")
         
         // store url datas to a data base !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
@@ -493,8 +516,10 @@ class ViewController: UIViewController {
             
             if isThumbnail == true{
             self.userImageThumbnailStorageURLs.append(fileURL)
+            GlobalVariable.userImageThumbnailStorageURLsGlobal.append(fileURL)
             } else {
             self.userImageStorageURLs.append(fileURL)
+            GlobalVariable.userImageStorageURLGlobal.append(fileURL)
             }
             
             print("file url is \(fileURL)")
@@ -610,4 +635,39 @@ extension UIImage {
         draw(in: CGRect(origin: .zero, size: canvasSize))
         return UIGraphicsGetImageFromCurrentImageContext()
     }
+    func resized(toWidthAndHeight width: CGFloat, height: CGFloat) -> UIImage? {
+        let canvasSize = CGSize(width: width, height: height)
+        UIGraphicsBeginImageContextWithOptions(canvasSize, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: CGRect(origin: .zero, size: canvasSize))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+    func rotate(radians: Float) -> UIImage? {
+        var newSize = CGRect(origin: CGPoint.zero, size: self.size).applying(CGAffineTransform(rotationAngle: CGFloat(radians))).size
+        // Trim off the extremely small float value to prevent core graphics from rounding it up
+        newSize.width = floor(newSize.width)
+        newSize.height = floor(newSize.height)
+        UIGraphicsBeginImageContextWithOptions(newSize, false, self.scale)
+        let context = UIGraphicsGetCurrentContext()!
+        // Move origin to middle
+        context.translateBy(x: newSize.width/2, y: newSize.height/2)
+        // Rotate around middle
+        context.rotate(by: CGFloat(radians))
+        // Draw the image at its center
+        self.draw(in: CGRect(x: -self.size.width/2, y: -self.size.height/2, width: self.size.width, height: self.size.height))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
+    }
 }
+
+
+
+
+
+
+
+
+
+
+

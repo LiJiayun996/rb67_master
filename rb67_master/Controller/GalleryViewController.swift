@@ -14,21 +14,20 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("GallVC loaded")
         setCollectionViewLayout()
-        print(userImageURL)
         //load user image url from database
     }
     
     //MARK: - app storged user image data
-    var userImageURL = [URL]()
-    var userImageThumbnailURL = [URL]()
     
     //MARK: - perpare data to slider view
+    
     var userFullSizeImages = [Image]()
     
     func loadFullSizeImages () {
-        for i in 0...userImageURL.count - 1 {
-            let imageURL = userImageURL[i]
+        for i in 0...GlobalVariable.userImageStorageURLGlobal.count - 1 {
+            let imageURL = GlobalVariable.userImageStorageURLGlobal[i]
             userFullSizeImages.append(Image(url: imageURL))
         }
     }
@@ -47,18 +46,19 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return userImageThumbnailURL.count
+        return GlobalVariable.userImageThumbnailStorageURLsGlobal.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! imageCellViewController
-        cell.userImageViewCell.image = UIImage(contentsOfFile: userImageThumbnailURL[indexPath.row].path)
+        cell.userImageViewCell.image = UIImage(contentsOfFile: GlobalVariable.userImageThumbnailStorageURLsGlobal[indexPath.row].path)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        print("selection view called")
         //load user full size image here
         loadFullSizeImages()
         
@@ -80,8 +80,7 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     @IBAction func backButtonPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
         userFullSizeImages.removeAll()
-        userImageURL.removeAll()
-        userImageThumbnailURL.removeAll()
+        print(userFullSizeImages.count)
     }
 }
 

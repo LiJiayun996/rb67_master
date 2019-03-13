@@ -14,16 +14,25 @@
             <objects>
                 <pageViewController storyboardIdentifier="ImageSlideShowViewController" autoresizesArchivedViewToFullSize="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" transitionStyle="scroll" pageSpacing="10" navigationOrientation="horizontal" spineLocation="none" id="qyz-oM-rqY" customClass="ImageSlideShowViewController" customModule="rb67_master" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems>
-                        <barButtonItem title="Item" id="y6Q-Oq-ziO">
+                        <barButtonItem systemItem="organize" id="y6Q-Oq-ziO">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="saveButtonPressed:" destination="qyz-oM-rqY" id="VzR-98-wpi"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="WYn-Xr-DIF"/>
-                        <barButtonItem systemItem="organize" id="8KD-Xw-nVY">
+                        <barButtonItem systemItem="action" id="8KD-Xw-nVY">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="shareButtonPressed:" destination="qyz-oM-rqY" id="NIF-wF-t4O"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="kEU-z9-1kM"/>
-                        <barButtonItem systemItem="bookmarks" id="U1o-L4-96X">
+                        <barButtonItem systemItem="trash" id="U1o-L4-96X">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="deleteButtonPressed:" destination="qyz-oM-rqY" id="eNa-O2-Las"/>
+                            </connections>
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" id="0YM-cN-H4F"/>

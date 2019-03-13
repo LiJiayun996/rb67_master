@@ -30,6 +30,39 @@ class ImageSlideShowCache: NSCache<AnyObject, AnyObject>
 
 open class ImageSlideShowViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate
 {
+    @IBAction func saveButtonPressed(_ sender: Any) {
+        print(_currentIndex)
+        UIImageWriteToSavedPhotosAlbum(UIImage(contentsOfFile: GlobalVariable.userImageStorageURLGlobal[_currentIndex].path)!, nil, nil, nil)
+    }
+    @IBAction func deleteButtonPressed(_ sender: Any) {
+            print("delete func called, current index = \(_currentIndex)")
+            GlobalVariable.userImageStorageURLGlobal.remove(at: _currentIndex)
+            GlobalVariable.userImageThumbnailStorageURLsGlobal.remove(at: _currentIndex)
+        
+            if _currentIndex == slides!.count - 1 {
+            goToPreviousPage()
+            slides?.remove(at: _currentIndex + 1)
+            } else {
+            goToNextPage()
+            slides?.remove(at: _currentIndex - 1)
+            }
+        
+            print(GlobalVariable.userImageStorageURLGlobal)
+            print("image count\(GlobalVariable.userImageStorageURLGlobal.count)")
+            print(GlobalVariable.userImageThumbnailStorageURLsGlobal)
+            print("thumb count\(GlobalVariable.userImageThumbnailStorageURLsGlobal.count)")
+    }
+    @IBAction func shareButtonPressed(_ sender: Any) {
+        
+        let mainVC = ViewController()
+        
+        print("Main VC arr count = \(mainVC.userImageStorageURLs.count)")
+        print("global var arr count = \(GlobalVariable.userImageStorageURLGlobal.count)")
+        print(_currentIndex)
+        print(GlobalVariable.userImageStorageURLGlobal)
+        
+    }
+    
     
     
 	static var imageSlideShowStoryboard:UIStoryboard = UIStoryboard(name: "ImageSlideShow", bundle: Bundle(for: ImageSlideShowViewController.self))
@@ -64,7 +97,7 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
 	fileprivate var panViewCenter:CGPoint = .zero
 	fileprivate var navigationBarHidden = false
 	fileprivate var toggleBarButtonItem:UIBarButtonItem?
-	fileprivate var _currentIndex: Int = 0
+    fileprivate var _currentIndex: Int = 0
 	fileprivate let slidesViewControllerCache = ImageSlideShowCache()
 	
 	override open var preferredStatusBarStyle:UIStatusBarStyle
@@ -132,27 +165,17 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
 		delegate = self
 		dataSource = self
 		
-//        hidesBottomBarWhenPushed = true
+        hidesBottomBarWhenPushed = true
 		navigationController?.navigationBar.tintColor = navigationBarTintColor
         navigationController?.view.backgroundColor = .black
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = true
-        
-//        toolbarItems?.append(UIBarButtonItem(barButtonSystemItem: .add, target: self, action: nil))
-        
-//        [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
-//            forBarMetrics:UIBarMetricsDefault];
-//        self.navigationController.navigationBar.shadowImage = [UIImage new];
-//        self.navigationController.navigationBar.translucent = YES;
-//        self.navigationController.view.backgroundColor = [UIColor clearColor];
-//        self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
+
         
         
         
 		navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(dismiss(sender:)))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: nil )
-        
 		
 		//	Manage Gestures
 		
@@ -197,7 +220,6 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
 	@objc open func dismiss(sender:AnyObject?)
 	{
 		dismiss(animated: true, completion: nil)
-		
 		controllerDidDismiss()
 	}
 	

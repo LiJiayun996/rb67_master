@@ -150,7 +150,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XCO-uA-ux4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="138" y="-555"/>
+            <point key="canvasLocation" x="954" y="-555"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -303,12 +303,11 @@
                                 <rect key="frame" x="0.0" y="818" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
-                                    <barButtonItem title="Item" id="KqS-s1-HH0"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="HM6-03-j2d"/>
-                                    <barButtonItem title="Item" id="vKh-7s-h7b"/>
+                                    <barButtonItem systemItem="add" id="vKh-7s-h7b"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="qSv-ha-Gjg"/>
-                                    <barButtonItem title="Item" id="OqM-4T-NS1"/>
                                 </items>
+                                <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </toolbar>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="NNz-uD-ieg">
                                 <rect key="frame" x="0.0" y="94" width="414" height="718"/>
@@ -367,7 +366,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q6J-Oj-Kwe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1069.5652173913045" y="138.61607142857142"/>
+            <point key="canvasLocation" x="955" y="139"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="uIG-hW-1k8">
@@ -385,7 +384,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wf8-ol-KSw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-591" y="-555"/>
+            <point key="canvasLocation" x="138" y="-555"/>
         </scene>
     </scenes>
 </document>
