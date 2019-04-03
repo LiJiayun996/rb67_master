@@ -39,7 +39,7 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
             GlobalVariable.userImageStorageURLGlobal.remove(at: _currentIndex)
             GlobalVariable.userImageThumbnailStorageURLsGlobal.remove(at: _currentIndex)
         
-            if _currentIndex == slides!.count - 1 {
+            if _currentIndex == slides!.count {
             goToPreviousPage()
             slides?.remove(at: _currentIndex + 1)
             } else {
@@ -220,6 +220,7 @@ open class ImageSlideShowViewController: UIPageViewController, UIPageViewControl
 	@objc open func dismiss(sender:AnyObject?)
 	{
 		dismiss(animated: true, completion: nil)
+
 		controllerDidDismiss()
 	}
 	

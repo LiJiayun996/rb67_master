@@ -12,6 +12,8 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     
     @IBOutlet weak var userImageCollectionView: UICollectionView!
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("GallVC loaded")
@@ -31,7 +33,6 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
             userFullSizeImages.append(Image(url: imageURL))
         }
     }
-    
     
     //MARK: - set up collection view layout
     func setCollectionViewLayout(){
