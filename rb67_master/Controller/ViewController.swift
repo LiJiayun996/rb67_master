@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import CoreImage
 import Vision
+import CoreMotion
 
 struct GlobalVariable {
     static var userImageStorageURLGlobal = [URL]()
@@ -17,7 +18,6 @@ struct GlobalVariable {
 }
 
 class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
-
     
     //MARK:  -- Camera var
     let dataOutput = AVCaptureVideoDataOutput()
@@ -28,18 +28,20 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var photoOutput: AVCapturePhotoOutput?
     var cameraPreviewLayer: AVCaptureVideoPreviewLayer?
     @IBOutlet weak var previewView: UIView!
+    
+//    let motionManager = CMMotionManager()
+    
     //MARK:  -- image var
     var image: UIImage?
     var cameraPositionIsBack = true
+    
     //MARK:  -- fine tuning image exposure
-
     var faceDetected : Bool = false
-    
-    
     var isoValueAsShot: Float! {get{return currentCamera?.iso}}
     var shutterValueAsShot: CMTime! {get{return currentCamera?.exposureDuration}}
     var exposureIndexNumber: Float! {get{return Float(shutterValueAsShot.value/100000) * Float(isoValueAsShot) }}
     var cameraWBRedBlueIndex : Float {get{return currentCamera!.deviceWhiteBalanceGains.redGain - currentCamera!.deviceWhiteBalanceGains.blueGain}}
+    
     //MARK:  -- Post image processing
     let ciContext = CIContext()
     var cameraPixelSpec : CGSize! {get{return image?.size}}
@@ -54,7 +56,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     public var userImageThumbnailStorageURLs = [URL]()
     
     //MARK:  -- Camera Operations
-    
     @IBOutlet weak var colorShutterButton: UIButton!
     @IBAction func colorShutterPressedTouchUpInside(_ sender: Any) {
         colorShutterButton.isEnabled = false
@@ -62,67 +63,80 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let settings = AVCapturePhotoSettings()
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
     }
-    
     @IBAction func blackWhiteShutterPressedTouchUpInside(_ sender: Any) {
         cameraExposureAdjust(exposureBias: returnExposureIndex())
         filterToProcess = "B&W"
         let settings = AVCapturePhotoSettings()
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
     }
-    
     @IBAction func flipCameraPressedTouchUpInside(_ sender: Any) {
         switchCamera()
     }
     
     //MARK:  -- UI Controlls
-    
     @IBAction func settingButtonPressed(_ sender: Any) {
-        
         performSegue(withIdentifier: "showSetting_Segue", sender: nil)
-        
     }
     
     //MARK:  -- Go to and transfer data to GalleryVC
-    
     @IBAction func galleryButtonPressed(_ sender: Any) {
         performSegue(withIdentifier: "showUserImageGallery_Segue", sender: nil)
         GlobalVariable.userImageStorageURLGlobal = userImageStorageURLs
     }
-    
     @IBOutlet weak var testIndexShow: UILabel!
     @IBOutlet weak var testExpo: UILabel!
-    
     @IBAction func TestButtonPressed(_ sender: Any) {
+        
+
         
         print(returnExposureIndex())
         testExpo.text = String(exposureIndexNumber)
-        
     }
-    
     
     //MARK:  -- Methods
     override func viewDidAppear(_ animated: Bool) {
         startDetecting()
+        captureSession.startRunning()
     }
-    
     override func viewDidDisappear(_ animated: Bool) {
         stopDetecting()
+        captureSession.stopRunning()
     }
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         setupCaptureSession()
         setupDevice()
         setupInputOutput()
         setupPreviewLayer()
         captureSession.startRunning()
+        
         // database storages set to global variebles here vvvvv
 //        let dataOutput = AVCaptureVideoDataOutput()
 //        dataOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
 //        captureSession.addOutput(dataOutput)
         
     }
+    
+//    func startDetectingDeviceAngle(){
+//        if self.motionManager.isDeviceMotionAvailable {
+//            self.motionManager.deviceMotionUpdateInterval = 0.1
+//            self.motionManager.startDeviceMotionUpdates(to: OperationQueue()) { [weak self] (motion, error) -> Void in
+//                if let attitude = motion?.attitude {
+//
+////                    print("yaw ->",attitude.yaw * 180 / Double.pi ," pitch ->", attitude.pitch * 180 / Double.pi, " roll ->", attitude.roll * 180 / Double.pi)
+//                    print("yaw ->",attitude.yaw ," pitch ->", attitude.pitch , " roll ->", attitude.roll)
+//                    DispatchQueue.main.async{
+//                        // Update UI
+//                    }
+//                }
+//            }
+//            print("Device motion started")
+//        }
+//        else {
+//            print("Device motion unavailable")
+//        }
+//    }
     
     func startDetecting(){
         self.dataOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
@@ -241,44 +255,34 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     func returnExposureIndex() -> Float {
-        print("returning expo bias")
         
         if self.faceDetected == true {
             
+            // Mark: need to add six new filter
+            // portraitDay - Blue Red Neutral
+            // portraitNight - Blue Red Neutral
+            
+            
             if self.exposureIndexNumber < 500 {
                 self.filterToProcess = "ColorDay"
-                print("expo bias = -1.0")
-                print(exposureIndexNumber)
                 return -1.0
             } else if self.exposureIndexNumber < 1000 {
                 self.filterToProcess = "ColorDay"
-                print("expo bias = -0.8")
-                print(exposureIndexNumber)
                 return -0.8
             } else if self.exposureIndexNumber < 2000 {
                 self.filterToProcess = "ColorDay"
-                print("expo bias = -0.6")
-                print(exposureIndexNumber)
                 return -0.6
             } else if self.exposureIndexNumber < 3000 {
                 self.filterToProcess = "ColorDay"
-                print("expo bias = -0.4")
-                print(exposureIndexNumber)
                 return -0.4
             } else if self.exposureIndexNumber < 6000 {
                 self.filterToProcess = "ColorDay"
-                print("expo bias = -0.2")
-                print(exposureIndexNumber)
                 return -0.2
             } else if self.exposureIndexNumber < 12000 {
-                self.filterToProcess = "ColorNight"
-                print("expo bias = -0.1")
-                print(exposureIndexNumber)
+                self.filterToProcess = "ColorDay"
                 return -0.1
             } else {
-                self.filterToProcess = "ColorNight"
-                print("expo bias = 0.0")
-                print(exposureIndexNumber)
+                self.filterToProcess = "ColorDay"
                 return 0.0
             }
             
@@ -286,13 +290,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             if self.exposureIndexNumber < 8000 {
                 self.filterToProcess = "ColorDay"
-                print("expo bias = -1.5")
-                print(exposureIndexNumber)
                 return -1.5
             } else {
-                self.filterToProcess = "ColorNight"
-                print("expo bias = -1.0")
-                print(exposureIndexNumber)
+                self.filterToProcess = "ColorDay"
                 return -1.5
             }
         }
@@ -316,20 +316,23 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 //MARK:  -- Post Image Production
     func postImageProcessingProcedure() {
         
-       
+       self.filterToProcess = "ColorDay"
         
         UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+        
         postProcessingImage = image
+        
         if cameraPositionIsBack == false {
             postProcessingImage = postProcessingImage.resized(toWidth: 3024)         //BUG FIX for front cam white border
         }
         
         lightLeakOverlayImage = determineLightLeakOverlay()
+        
         lightLeakOverlayImage = UIImage(cgImage: lightLeakOverlayImage.cgImage!, scale: lightLeakOverlayImage.scale, orientation: UIImage.Orientation(rawValue: Int.random(in: 0...7))! )
         
         dirtOverlay = UIImage(named: "Dirt\(Int.random(in: 1...9))")
         
-        borderOverlayImage = UIImage(named: "testBorderOverlayPNG")
+        borderOverlayImage = UIImage(named: "InsBorder")
         
         if filterToProcess == "B&W" {
             
@@ -351,7 +354,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         } else if filterToProcess == "ColorDay"{
             
             postProcessingImage = postProcessingImage.scaled(to: CGSize(width: postProcessingImage.size.width, height: postProcessingImage.size.width))
+            
             lightLeakOverlayImage = lightLeakOverlayImage.scaled(to: postProcessingImage.size)
+            
+            borderOverlayImage = borderOverlayImage.scaled(to: postProcessingImage.size)
             
             postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 0.5, filterEffectValueName: kCIInputIntensityKey))
             
@@ -359,9 +365,20 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIPhotoEffectFade", fliterEffectValue: nil, filterEffectValueName: nil))
             
+            print(postProcessingImage.size , "size before")
+            
+            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIBloom", fliterEffectValue: 5.0, filterEffectValueName: kCIInputRadiusKey))
+            
+            print(postProcessingImage.size , "size after")
+            
+            postProcessingImage = postProcessingImage.scaled(to: CGSize(width: postProcessingImage.size.width - 72.0 , height: postProcessingImage.size.height - 72.0))
+            
+            print(postProcessingImage.size , "size trim")
+            
             postProcessingImage = blendImage(image: postProcessingImage, overlayImage: lightLeakOverlayImage)
             
             postProcessingImage = blendBoarderImage(image: postProcessingImage, overlayImage: borderOverlayImage)
+            
             
         } else if filterToProcess == "ColorNight" {
             
@@ -370,6 +387,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             postProcessingImage = postProcessingImage.scaled(to: CGSize(width: postProcessingImage.size.width, height: postProcessingImage.size.width))
             
             lightLeakOverlayImage = lightLeakOverlayImage.scaled(to: postProcessingImage.size)
+            
+            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIMedianFilter", fliterEffectValue: nil, filterEffectValueName: nil))
             
             postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 0.5, filterEffectValueName: kCIInputIntensityKey))
             
@@ -413,9 +432,23 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     //Test Code for folor polynomial
+    func filterObject(imageToProcess: UIImage, isDay: Bool, environmentColor: String) -> UIImage {
+        
+        //if is day == false add more blue
+        
+        var image = imageToProcess
+        image = applyFilterTo(image: image, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 0.5, filterEffectValueName: kCIInputIntensityKey))!
+        
+        image = applyFilterTo(image: image, filterEffect: Filter(filterName: "CIPhotoEffectChrome", fliterEffectValue: nil, filterEffectValueName: nil))!
+        
+        image = applyFilterTo(image: image, filterEffect: Filter(filterName: "CIPhotoEffectFade", fliterEffectValue: nil, filterEffectValueName: nil))!
+        
+        return image
+    }
+    
     
 
-    
+    // MARK: image processing stuffs
     func cropImage(image:UIImage , FactorToOne: CGFloat) -> UIImage{
         var imageToProcess = image
         imageToProcess = image.scaled(to: CGSize(width:image.size.width, height:(image.size.width) * FactorToOne))
