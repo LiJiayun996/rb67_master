@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DD73BFF72255F23F00F3B050 /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD73BFF62255F23F00F3B050 /* ImageProcessing.swift */; };
 		DD808D1D222BD632004E5BA2 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */; };
 		DD808D1F222BD65F004E5BA2 /* MainSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */; };
 		DDA7D4292231110600CEEA3E /* ImageSlideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA7D4222231110600CEEA3E /* ImageSlideViewController.swift */; };
@@ -24,7 +23,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DD73BFF62255F23F00F3B050 /* ImageProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
 		DD808D1C222BD632004E5BA2 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
 		DD808D1E222BD65F004E5BA2 /* MainSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSettingViewController.swift; sourceTree = "<group>"; };
 		DDA7D4222231110600CEEA3E /* ImageSlideViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSlideViewController.swift; sourceTree = "<group>"; };
@@ -77,7 +75,6 @@
 			isa = PBXGroup;
 			children = (
 				DDA7D4202231110600CEEA3E /* ImageSlideShow */,
-				DD73BFF62255F23F00F3B050 /* ImageProcessing.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -219,7 +216,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD73BFF72255F23F00F3B050 /* ImageProcessing.swift in Sources */,
 				DD808D1F222BD65F004E5BA2 /* MainSettingViewController.swift in Sources */,
 				DDA7D42B2231110600CEEA3E /* ImageSlideShowNavigationController.swift in Sources */,
 				DDA7D42F2231169A00CEEA3E /* imageCellViewController.swift in Sources */,

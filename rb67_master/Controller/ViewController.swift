@@ -288,12 +288,27 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
         } else {
             
-            if self.exposureIndexNumber < 8000 {
+            if self.exposureIndexNumber < 500 {
                 self.filterToProcess = "ColorDay"
-                return -1.5
+                return -1.0
+            } else if self.exposureIndexNumber < 1000 {
+                self.filterToProcess = "ColorDay"
+                return -0.8
+            } else if self.exposureIndexNumber < 2000 {
+                self.filterToProcess = "ColorDay"
+                return -0.6
+            } else if self.exposureIndexNumber < 3000 {
+                self.filterToProcess = "ColorDay"
+                return -0.4
+            } else if self.exposureIndexNumber < 6000 {
+                self.filterToProcess = "ColorDay"
+                return -0.2
+            } else if self.exposureIndexNumber < 12000 {
+                self.filterToProcess = "ColorDay"
+                return -0.1
             } else {
                 self.filterToProcess = "ColorDay"
-                return -1.5
+                return 0.0
             }
         }
         
@@ -316,8 +331,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 //MARK:  -- Post Image Production
     func postImageProcessingProcedure() {
         
-       self.filterToProcess = "ColorDay"
-        
         UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
         
         postProcessingImage = image
@@ -332,26 +345,21 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         dirtOverlay = UIImage(named: "Dirt\(Int.random(in: 1...9))")
         
-        borderOverlayImage = UIImage(named: "InsBorder")
+        borderOverlayImage = UIImage(named: "ins\(Int.random(in: 1...7))")
         
         if filterToProcess == "B&W" {
             
-            postProcessingImage = cropImage(image: postProcessingImage, FactorToOne: 2)
+//            lightLeakOverlayImage = lightLeakOverlayImage.scaled(to: postProcessingImage.size)
 //
-//            postProcessingImage = postProcessingImage.scaled(to: CGSize(width: postProcessingImage.size.width, height: postProcessingImage.size.width))
+//            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 0.5, filterEffectValueName: kCIInputIntensityKey))
+//
+//            postProcessingImage = blendImage(image: postProcessingImage, overlayImage: lightLeakOverlayImage)
+//
+//            postProcessingImage = blendBoarderImage(image: postProcessingImage, overlayImage: borderOverlayImage)
+//
+//            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIPhotoEffectNoir", fliterEffectValue: nil, filterEffectValueName: nil))
             
-            
-            lightLeakOverlayImage = lightLeakOverlayImage.scaled(to: postProcessingImage.size)
-            
-            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 0.5, filterEffectValueName: kCIInputIntensityKey))
-            
-            postProcessingImage = blendImage(image: postProcessingImage, overlayImage: lightLeakOverlayImage)
-            
-            postProcessingImage = blendBoarderImage(image: postProcessingImage, overlayImage: borderOverlayImage)
-    
-            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIPhotoEffectNoir", fliterEffectValue: nil, filterEffectValueName: nil))
-            
-        } else if filterToProcess == "ColorDay"{
+            borderOverlayImage = UIImage(named: "testBorderOverlayPNG")
             
             postProcessingImage = postProcessingImage.scaled(to: CGSize(width: postProcessingImage.size.width, height: postProcessingImage.size.width))
             
@@ -359,21 +367,59 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             borderOverlayImage = borderOverlayImage.scaled(to: postProcessingImage.size)
             
-            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 0.5, filterEffectValueName: kCIInputIntensityKey))
+            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 1.0, filterEffectValueName: kCIInputIntensityKey))
             
             postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIPhotoEffectChrome", fliterEffectValue: nil, filterEffectValueName: nil))
             
             postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIPhotoEffectFade", fliterEffectValue: nil, filterEffectValueName: nil))
             
+            let processingImageSize = postProcessingImage.size
             print(postProcessingImage.size , "size before")
             
-            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIBloom", fliterEffectValue: 5.0, filterEffectValueName: kCIInputRadiusKey))
+            postProcessingImage = addBloom(image: postProcessingImage, inputRadius: 4.5, inputIntensity: 0.5)
             
             print(postProcessingImage.size , "size after")
             
-            postProcessingImage = postProcessingImage.scaled(to: CGSize(width: postProcessingImage.size.width - 72.0 , height: postProcessingImage.size.height - 72.0))
+            postProcessingImage = postProcessingImage.scaled(to: CGSize(width: processingImageSize.width, height: processingImageSize.height))
             
             print(postProcessingImage.size , "size trim")
+            
+            postProcessingImage = addColorCast(image: postProcessingImage)
+            
+            postProcessingImage = blendImage(image: postProcessingImage, overlayImage: lightLeakOverlayImage)
+            
+            postProcessingImage = blendBoarderImage(image: postProcessingImage, overlayImage: borderOverlayImage)
+            
+            
+            
+            
+            
+        } else if filterToProcess == "ColorDay"{
+            
+            postProcessingImage = postProcessingImage.scaled(to: CGSize(width: borderOverlayImage.size.width, height: borderOverlayImage.size.height))
+            
+            lightLeakOverlayImage = lightLeakOverlayImage.scaled(to: postProcessingImage.size)
+            
+            borderOverlayImage = borderOverlayImage.scaled(to: postProcessingImage.size)
+            
+            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIVignette", fliterEffectValue: 1.0, filterEffectValueName: kCIInputIntensityKey))
+            
+            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIPhotoEffectChrome", fliterEffectValue: nil, filterEffectValueName: nil))
+            
+            postProcessingImage = applyFilterTo(image: postProcessingImage, filterEffect: Filter(filterName: "CIPhotoEffectFade", fliterEffectValue: nil, filterEffectValueName: nil))
+            
+            let processingImageSize = postProcessingImage.size
+            print(postProcessingImage.size , "size before")
+            
+            postProcessingImage = addBloom(image: postProcessingImage, inputRadius: 4.5, inputIntensity: 0.3)
+            
+            print(postProcessingImage.size , "size after")
+            
+            postProcessingImage = postProcessingImage.scaled(to: CGSize(width: processingImageSize.width, height: processingImageSize.height))
+            
+            print(postProcessingImage.size , "size trim")
+            
+            postProcessingImage = addColorCast(image: postProcessingImage)
             
             postProcessingImage = blendImage(image: postProcessingImage, overlayImage: lightLeakOverlayImage)
             
@@ -402,7 +448,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
         }
         
-        postProcessingImage = blendImage(image: postProcessingImage, overlayImage: dirtOverlay)
+//        postProcessingImage = blendImage(image: postProcessingImage, overlayImage: dirtOverlay)
         
         // assigning / applying light leak overlay
 
@@ -475,6 +521,75 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let filterEffterValueName = filterEffect.filterEffectValueName {
             filter?.setValue(filterEffectValue, forKey: filterEffterValueName)
         }
+        var filteredImage: UIImage?
+        if let output = filter?.value(forKey: kCIOutputImageKey) as? CIImage,
+            let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
+            filteredImage = UIImage(cgImage: cgiImageResult)
+        }
+        return filteredImage
+    }
+    
+    private func addColorCast(image: UIImage) -> UIImage? {
+        var imageToProcess = image
+
+        imageToProcess = applyMultiplyBlendMode(image: imageToProcess, overlayImage: UIImage(named: "cxyMultiply")!.scaled(to: imageToProcess.size))!
+
+//        imageToProcess = applyColorBurnBlendMode(image: imageToProcess, overlayImage: UIImage(named: "cxyColorBurn")!.scaled(to: imageToProcess.size))!
+
+        imageToProcess = applyLightenBlendMode(image: imageToProcess, overlayImage: UIImage(named: "cxyLighten")!.scaled(to: imageToProcess.size))!
+        
+        return imageToProcess
+    }
+    
+    private func applyMultiplyBlendMode(image: UIImage, overlayImage: UIImage) -> UIImage? {
+        let imageToProcess = CIImage(image: image)
+        let overlayImageToProcess = CIImage(image: overlayImage)
+        let imageBlend = CIFilter(name: "CIMultiplyBlendMode")
+        imageBlend?.setValue(overlayImageToProcess, forKey: kCIInputImageKey)
+        imageBlend?.setValue(imageToProcess, forKey: kCIInputBackgroundImageKey)
+        var blendedImage: UIImage?
+        if let output = imageBlend?.value(forKey: kCIOutputImageKey) as? CIImage,
+            let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
+            blendedImage = UIImage(cgImage: cgiImageResult)
+        }
+        return blendedImage
+    }
+    private func applyColorBurnBlendMode(image: UIImage, overlayImage: UIImage) -> UIImage? {
+        let imageToProcess = CIImage(image: image)
+        let overlayImageToProcess = CIImage(image: overlayImage)
+        let imageBlend = CIFilter(name: "CIColorBurnBlendMode")
+        imageBlend?.setValue(overlayImageToProcess, forKey: kCIInputImageKey)
+        imageBlend?.setValue(imageToProcess, forKey: kCIInputBackgroundImageKey)
+        var blendedImage: UIImage?
+        if let output = imageBlend?.value(forKey: kCIOutputImageKey) as? CIImage,
+            let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
+            blendedImage = UIImage(cgImage: cgiImageResult)
+        }
+        return blendedImage
+    }
+    private func applyLightenBlendMode(image: UIImage, overlayImage: UIImage) -> UIImage? {
+        let imageToProcess = CIImage(image: image)
+        let overlayImageToProcess = CIImage(image: overlayImage)
+        let imageBlend = CIFilter(name: "CILightenBlendMode")
+        imageBlend?.setValue(overlayImageToProcess, forKey: kCIInputImageKey)
+        imageBlend?.setValue(imageToProcess, forKey: kCIInputBackgroundImageKey)
+        var blendedImage: UIImage?
+        if let output = imageBlend?.value(forKey: kCIOutputImageKey) as? CIImage,
+            let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
+            blendedImage = UIImage(cgImage: cgiImageResult)
+        }
+        return blendedImage
+    }
+    
+    
+    
+    private func addBloom(image: UIImage, inputRadius: Double, inputIntensity: Double) -> UIImage? {
+        
+        let imageToProcess = CIImage(image: image)
+        let filter = CIFilter(name: "CIBloom")
+        filter?.setValue(imageToProcess, forKey: kCIInputImageKey)
+        filter?.setValue(inputRadius, forKey: kCIInputRadiusKey)
+        filter?.setValue(inputIntensity, forKey: kCIInputIntensityKey)
         var filteredImage: UIImage?
         if let output = filter?.value(forKey: kCIOutputImageKey) as? CIImage,
             let cgiImageResult = self.ciContext.createCGImage(output, from: output.extent){
